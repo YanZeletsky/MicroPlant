@@ -102,8 +102,8 @@
 
   .panel-role-btn:hover { background: #EEF5EE; }
   .panel-role-btn svg { width: 18px; height: 18px; stroke: #1A2E1A; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-  .panel-role-btn span { font-size: 14px; font-weight: 500; color: #1A2E1A; flex: 1; }
-  .panel-role-btn .chevron { width: 14px; height: 14px; stroke: #6B8A6B; stroke-width: 1.8; }
+  .panel-role-btn span { font-size: 14px; font-weight: 500; color: #1A2E1A; }
+  .panel-role-btn .chevron { width: 14px; height: 14px; stroke: #6B8A6B; stroke-width: 1.8; margin-left: auto; }
 
   .panel-nav {
     flex: 1; padding: 12px;
@@ -338,7 +338,16 @@
   @media (max-width: 1023px) {
     table { display: none; }
     thead { display: none; }
-    .mobile-cards { display: flex; flex-direction: column; gap: 10px; padding: 0 16px 16px; }
+    .mobile-cards { display: flex; flex-direction: column; gap: 10px; padding: 0 !important; }
+
+    /* Standalone cards: remove parent container */
+    .table-card, .batches-table-card {
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      overflow: visible !important;
+    }
+    .table-card .table-header, .batches-table-card .batches-toolbar { padding-left: 0 !important; padding-right: 0 !important; }
 
     /* ── Единая мобильная типографика ── */
     .chart-title, .table-title, .m-card-name { font-size: 14px !important; }
