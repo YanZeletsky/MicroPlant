@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MicroPlant — Закупщик</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Roboto:wght@700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #F7FAF7;
+    color: #1A2E1A;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  @media (min-width: 1024px) { body { flex-direction: row; } }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    width: 240px;
+    min-width: 240px;
+    height: 100vh;
+    background: #FFFFFF;
+    border-right: 1px solid #E5EDE5;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-logo {
+    height: 72px;
+    border-bottom: 1px solid #E5EDE5;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1A2E1A;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav-item:hover { background: #F0F5F0; }
+  .nav-item.active { background: #2E7D32; }
+  .nav-item.active .nav-text { color: #FFFFFF; }
+
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .nav-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #5A7A5A;
+  }
+
+  .sidebar-footer {
+    padding: 12px;
+    border-top: 1px solid #E5EDE5;
+  }
+
+  .logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .logout-btn:hover { background: #F0F5F0; }
+
+  .logout-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: #5A7A5A;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .logout-btn span {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #5A7A5A;
+  }
+
+  /* ─── MAIN ─── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .header {
+    height: 72px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E5EDE5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    flex-shrink: 0;
+  }
+
+  .header-inner {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-date {
+    font-size: 14px;
+    color: #5A7A5A;
+    font-weight: 400;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .bell-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #FFFFFF;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: background 0.15s;
+  }
+
+  .bell-btn:hover { background: #F0F5F0; }
+
+  .bell-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: #6B8A6B;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .bell-dot {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #FF8F00;
+    border: 1.5px solid #FFFFFF;
+  }
+
+  .user-btn {
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 11.5px;
+    background: #F7FAF7;
+    border: 1px solid #D4E8D4;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .user-btn:hover { background: #EEF5EE; }
+
+  .user-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: #1A2E1A;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .user-btn-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1A2E1A;
+  }
+
+  .user-btn-chevron {
+    width: 14px;
+    height: 14px;
+    stroke: #6B8A6B;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    background: #F7FAF7;
+  }
+
+  .screen { display: none; width: 100%; height: 100%; }
+  .screen.active { display: block; }
+
+  /* ═══ MOBILE ═══ */
+  .mobile-header { display: flex; align-items: center; justify-content: space-between; height: 56px; padding: 0 16px; background: #FFFFFF; border-bottom: 1px solid #E5EDE5; position: sticky; top: 0; z-index: 100; flex-shrink: 0; }
+  .mobile-header-logo { display: flex; align-items: center; gap: 10px; }
+  .burger-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: none; border: none; cursor: pointer; border-radius: 10px; }
+  .burger-btn:hover { background: #F0F5F0; }
+  .burger-btn svg { width: 22px; height: 22px; stroke: #1A2E1A; fill: none; stroke-width: 1.8; stroke-linecap: round; }
+  .panel-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; }
+  .panel-overlay.open { display: block; }
+  .slide-panel { position: fixed; top: 0; right: 0; width: 280px; height: 100vh; background: #FFFFFF; border-left: 1px solid #E5EDE5; z-index: 201; transform: translateX(100%); transition: transform 0.25s ease; display: flex; flex-direction: column; box-shadow: -4px 0 24px rgba(0,0,0,0.1); }
+  .slide-panel.open { transform: translateX(0); }
+  .panel-header { padding: 20px; border-bottom: 1px solid #E5EDE5; display: flex; flex-direction: column; gap: 16px; }
+  .panel-date { font-size: 13px; color: #5A7A5A; }
+  .panel-role-btn { height: 44px; padding: 0 16px; border-radius: 12px; background: #F7FAF7; border: 1px solid #D4E8D4; display: flex; align-items: center; gap: 8px; cursor: pointer; width: 100%; }
+  .panel-role-btn:hover { background: #EEF5EE; }
+  .panel-role-btn svg { width: 18px; height: 18px; stroke: #1A2E1A; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .panel-role-btn span { font-size: 14px; font-weight: 500; color: #1A2E1A; flex: 1; }
+  .panel-role-btn .chevron { width: 14px; height: 14px; stroke: #6B8A6B; stroke-width: 1.8; }
+  .panel-nav { flex: 1; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+  .panel-nav-item { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 14px; border-radius: 14px; cursor: pointer; transition: background 0.15s; border: none; background: none; width: 100%; text-align: left; }
+  .panel-nav-item:hover { background: #F0F5F0; }
+  .panel-nav-item.active { background: #2E7D32; }
+  .panel-nav-item.active .pnav-text { color: #FFFFFF; }
+  .panel-nav-item.active .pnav-icon svg { stroke: #FFFFFF; }
+  .pnav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+  .pnav-icon svg { width: 18px; height: 18px; stroke: #5A7A5A; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .pnav-text { font-size: 14px; font-weight: 500; color: #5A7A5A; }
+  .panel-footer { padding: 12px; border-top: 1px solid #E5EDE5; }
+  .panel-logout { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 14px; border-radius: 14px; cursor: pointer; background: none; border: none; width: 100%; }
+  .panel-logout:hover { background: #F0F5F0; }
+  .panel-logout svg { width: 18px; height: 18px; stroke: #5A7A5A; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .panel-logout span { font-size: 14px; font-weight: 500; color: #5A7A5A; }
+
+  /* Mobile cards for table */
+  .mobile-cards { display: none; }
+  .m-card { background: #FFFFFF; border: 1px solid #E5EDE5; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .m-card-top { display: flex; justify-content: space-between; align-items: center; }
+  .m-card-name { font-size: 13px; font-weight: 600; color: #1A2E1A; display: flex; align-items: center; gap: 8px; }
+  .m-card-name .m-emoji { width: 24px; height: 24px; border-radius: 6px; background: #E8F5E9; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .m-card-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .m-card-stat { background: #F7FAF7; border-radius: 8px; padding: 6px 8px; }
+  .m-card-stat-value { font-size: 12px; font-weight: 700; color: #1A2E1A; }
+  .m-card-stat-label { font-size: 10px; color: #8FA58F; }
+  .m-card-meta { font-size: 10px; color: #8FA58F; display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+  .m-card-order { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 10px; background: #E8F5E9; font-size: 10px; font-weight: 600; color: #2E7D32; }
+
+  /* Filters wrap */
+  .filters-wrap { position: relative; }
+  .filters-wrap::after { content: ''; position: absolute; top: 0; right: 0; width: 40px; height: 100%; background: linear-gradient(to left, #F7FAF7 0%, transparent 100%); pointer-events: none; z-index: 1; }
+
+  @media (max-width: 1023px) {
+    .sidebar { display: none !important; }
+    .header { display: none !important; }
+    .main { min-width: 0; }
+
+    /* Content area */
+    #screen-raw > div { padding: 16px !important; gap: 12px !important; }
+
+    /* Metrics: 2-column grid, right card spans 2 rows */
+    #screen-raw [style*="grid-template-columns:repeat(3"] {
+      grid-template-columns: 1fr 1fr !important;
+      grid-template-rows: auto auto !important;
+      gap: 10px !important;
+    }
+    #screen-raw [style*="grid-template-columns:repeat(3"] > div {
+      padding: 14px !important;
+    }
+    #screen-raw [style*="grid-template-columns:repeat(3"] > div:nth-child(3) {
+      grid-row: 1 / 3;
+      grid-column: 2;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+    }
+    #screen-raw [style*="font-size:40px"] { font-size: 28px !important; margin-bottom: 4px !important; }
+    #screen-raw [style*="margin-bottom:16px"] { margin-bottom: 8px !important; }
+    #screen-raw [style*="grid-template-columns:repeat(3"] [style*="font-size:14px"][style*="font-weight:500"] { font-size: 12px !important; }
+    #screen-raw [style*="grid-template-columns:repeat(3"] [style*="font-size:13px"][style*="color:#9CA3AF"] { font-size: 11px !important; }
+
+    /* Filters: typography */
+    .filters-wrap [style*="display:flex"][style*="gap:8px"] {
+      overflow-x: auto !important;
+      scrollbar-width: none;
+      flex-wrap: nowrap !important;
+      -webkit-overflow-scrolling: touch;
+      padding-right: 32px;
+    }
+    .filters-wrap [style*="display:flex"][style*="gap:8px"]::-webkit-scrollbar { display: none; }
+    .filters-wrap [style*="display:flex"][style*="gap:8px"] > button {
+      flex-shrink: 0;
+      font-size: 12px !important;
+      height: 30px !important;
+      padding: 0 12px !important;
+    }
+
+    /* Table → standalone cards */
+    #screen-raw table { display: none !important; }
+    #screen-raw [style*="border-radius:16px"][style*="overflow:hidden"] {
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      overflow: visible !important;
+    }
+    #screen-raw [style*="border-radius:16px"][style*="overflow:hidden"] thead { display: none; }
+    .mobile-cards { display: flex !important; flex-direction: column; gap: 10px; padding: 0 !important; }
+
+    /* Order screen */
+    #screen-order > div { padding: 16px !important; }
+    #screen-order [style*="width:734px"] { width: 100% !important; padding: 14px !important; }
+
+    /* Reduce all internal margins */
+    #screen-order [style*="margin-bottom:24px"] { margin-bottom: 14px !important; }
+    #screen-order [style*="margin-bottom:20px"] { margin-bottom: 12px !important; }
+    #screen-order [style*="margin-bottom:16px"] { margin-bottom: 10px !important; }
+    #screen-order [style*="gap:12px"] { gap: 8px !important; }
+
+    /* Hide column headers on mobile */
+    #screen-order [style*="grid-template-columns:2fr"][style*="border-bottom"] { display: none !important; }
+
+    /* Order rows: 2-column grid, product spans full width */
+    #screen-order [style*="grid-template-columns:2fr 0.6fr"] {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 8px !important;
+    }
+    #screen-order [style*="grid-template-columns:2fr 0.6fr"] > div:first-child {
+      grid-column: 1 / -1;
+    }
+
+    /* Inputs: smaller */
+    #screen-order [style*="height:44px"] { height: 38px !important; font-size: 12px !important; padding: 0 10px !important; border-radius: 10px !important; }
+
+    /* Title */
+    #screen-order [style*="font-size:17px"] { font-size: 14px !important; }
+    #screen-order [style*="font-size:13px"][style*="color:#2E7D32"] { font-size: 12px !important; }
+
+    /* Comments */
+    #screen-order textarea { font-size: 12px !important; height: 80px !important; padding: 12px !important; border-radius: 10px !important; }
+    #screen-order [style*="font-size:14px"][style*="font-weight:600"] { font-size: 12px !important; }
+
+    /* Total + button */
+    #screen-order [style*="font-size:15px"][style*="font-weight:700"] { font-size: 13px !important; }
+    #screen-order button[style*="height:52px"] { height: 44px !important; font-size: 13px !important; border-radius: 12px !important; }
+
+    /* ── Global: filters+table section gap ── */
+    #screen-raw [style*="gap:15px"] { gap: 10px !important; }
+    #screen-raw [style*="gap:20px"] { gap: 12px !important; }
+  }
+
+  @media (min-width: 1024px) {
+    .mobile-header { display: none !important; }
+    .slide-panel, .panel-overlay { display: none !important; }
+    .filters-wrap::after { display: none; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- MOBILE HEADER -->
+<div class="mobile-header">
+  <div class="mobile-header-logo">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="14" fill="#2E7D32"/><path d="M16 17.0529V23M16 16.9468C16 13.6824 18.6536 11.0323 21.9393 11C21.9793 11.2774 22 11.5609 22 11.8493C22 15.1137 19.3464 17.7637 16.0608 17.7961C16.0207 17.5187 16 17.2351 16 16.9468ZM16 16.9468C16 13.6824 13.3465 11.0323 10.0607 11C10.0207 11.2774 10 11.5609 10 11.8493C10 15.1137 12.6535 17.7637 15.9392 17.7961C15.9793 17.5187 16 17.2351 16 16.9468Z" fill="#2E7D32" stroke="white" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span style="font-family:'Roboto',sans-serif; font-size:18px; font-weight:700; color:#1A2E1A;">MicroPlant</span>
+  </div>
+  <button class="burger-btn" onclick="togglePanel()"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+</div>
+<div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+<div class="slide-panel" id="slidePanel">
+  <div class="panel-header">
+    <div class="panel-date">Понедельник, 29 апреля, 2026</div>
+    <button class="panel-role-btn" onclick="window.parent.postMessage({type:'toggleRoles'},'*')">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+      <span>Закупщик</span>
+      <svg class="chevron" viewBox="0 0 14 14"><path d="M2 4.5L7 9.5L12 4.5"/></svg>
+    </button>
+  </div>
+  <nav class="panel-nav">
+    <button class="panel-nav-item active" onclick="switchScreenMobile('raw', this)">
+      <span class="pnav-icon"><svg viewBox="0 0 20 20"><path d="M3 5h14M3 10h14M3 15h14"/></svg></span>
+      <span class="pnav-text">Сырьё</span>
+    </button>
+    <button class="panel-nav-item" onclick="switchScreenMobile('order', this)">
+      <span class="pnav-icon"><svg viewBox="0 0 20 20"><path d="M2 3H3.5L4.5 12H14.5L16 6H5.5" stroke-width="1.5"/><circle cx="7.5" cy="15" r="1"/><circle cx="13" cy="15" r="1"/></svg></span>
+      <span class="pnav-text">Заказ поставщику</span>
+    </button>
+  </nav>
+  <div class="panel-footer">
+    <button class="panel-logout"><svg viewBox="0 0 18 18"><path d="M7 16H3C2.45 16 2 15.55 2 15V3C2 2.45 2.45 2 3 2H7M12 13L16 9L12 5M16 9H6"/></svg><span>Выйти</span></button>
+  </div>
+</div>
+
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" rx="14" fill="#2E7D32"/>
+      <path d="M16 17.0529V23V17.0529ZM16 16.9468C16 13.6824 18.6536 11.0323 21.9393 11C21.9793 11.2774 22 11.5609 22 11.8493C22 15.1137 19.3464 17.7637 16.0608 17.7961C16.0207 17.5187 16 17.2351 16 16.9468ZM16 16.9468C16 13.6824 13.3465 11.0323 10.0607 11C10.0207 11.2774 10 11.5609 10 11.8493C10 15.1137 12.6535 17.7637 15.9392 17.7961C15.9793 17.5187 16 17.2351 16 16.9468Z" fill="#2E7D32"/>
+      <path d="M16 17.0529V23M16 16.9468C16 13.6824 18.6536 11.0323 21.9393 11C21.9793 11.2774 22 11.5609 22 11.8493C22 15.1137 19.3464 17.7637 16.0608 17.7961C16.0207 17.5187 16 17.2351 16 16.9468ZM16 16.9468C16 13.6824 13.3465 11.0323 10.0607 11C10.0207 11.2774 10 11.5609 10 11.8493C10 15.1137 12.6535 17.7637 15.9392 17.7961C15.9793 17.5187 16 17.2351 16 16.9468Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="logo-text">MicroPlant</span>
+  </div>
+
+  <nav class="sidebar-nav">
+
+    <!-- Сырьё -->
+    <button class="nav-item active" onclick="switchScreen('raw', this)">
+      <span class="nav-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10.0234 2.77246L13.1074 4.62305V4.62207L16.2334 6.53906V13.5615L16.2285 13.5791C16.2244 13.5862 16.2169 13.5944 16.2051 13.6016L10.1387 17.2178H10.1221L10.0195 17.249L9.91699 17.2178H9.90137L3.7832 13.5449C3.77203 13.5379 3.7646 13.5292 3.76074 13.5225C3.75703 13.5158 3.75585 13.5098 3.75586 13.5049V6.47168L9.89746 2.7627C9.90127 2.7606 9.90615 2.76065 9.91016 2.75879H9.93945L9.9873 2.75L10.0234 2.77246ZM14.9648 7.33398L10.4053 10.0693L10.041 10.2871V17.1729L11.1777 16.4863L15.7373 13.7354L16.1006 13.5166V6.65332L14.9648 7.33398ZM12.625 4.9375L7.99121 7.72949L6.9082 8.38184L8 9.01953L9.58301 9.94434L9.96484 10.167L10.3447 9.94141L14.9873 7.18262L16.0654 6.54102L14.9902 5.89453L13.3984 4.9375L13.0117 4.70508L12.625 4.9375ZM9.57617 3.11133L4.93359 5.89453L3.85742 6.53906L4.93457 7.18164L6.41895 8.06641L6.80469 8.29688L7.18945 8.06543L11.8232 5.28223L12.8945 4.63867L11.8232 3.99609L10.3477 3.11133L9.96191 2.87988L9.57617 3.11133ZM9.88281 10.2871L9.51855 10.0693L4.95898 7.33398L3.82324 6.65332V13.5449L4.19043 13.7627L8.75 16.4648L9.88281 17.1367V10.2871Z" fill="white" stroke="white" stroke-width="1.5"/>
+        </svg>
+      </span>
+      <span class="nav-text">Сырьё</span>
+    </button>
+
+    <!-- Заказ поставщику -->
+    <button class="nav-item" onclick="switchScreen('order', this)">
+      <span class="nav-icon">
+        <!-- Иконка корзины/тележки -->
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 3H3.5L4.5 12H14.5L16 6H5.5" stroke="#5A7A5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="7.5" cy="15" r="1" fill="#5A7A5A"/>
+          <circle cx="13" cy="15" r="1" fill="#5A7A5A"/>
+        </svg>
+      </span>
+      <span class="nav-text">Заказ поставщику</span>
+    </button>
+
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="logout-btn">
+      <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 16H3C2.45 16 2 15.55 2 15V3C2 2.45 2.45 2 3 2H7M12 13L16 9L12 5M16 9H6"/>
+      </svg>
+      <span>Выйти</span>
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="header">
+    <div class="header-inner">
+      <span class="header-date">Понедельник, 29 апреля, 2026</span>
+      <div class="header-right">
+        <button class="bell-btn" aria-label="Уведомления">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+          </svg>
+          <span class="bell-dot"></span>
+        </button>
+        <button class="user-btn">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/>
+          </svg>
+          <span class="user-btn-label">Закупщик</span>
+          <svg class="user-btn-chevron" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 4.5L7 9.5L12 4.5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div id="screen-raw" class="screen active">
+      <div style="padding:20px 24px; display:flex; flex-direction:column; gap:20px;">
+
+        <!-- Отсек 1: Карточки статусов -->
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px;">
+
+          <!-- Критично -->
+          <div style="background:#FFFFFF; border:1px solid #E5EDE5; border-radius:16px; padding:20px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9v4M12 17h.01" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span style="font-family:'Inter',sans-serif; font-size:14px; font-weight:500; color:#EF4444;">Критично</span>
+            </div>
+            <div style="font-family:'Inter',sans-serif; font-size:40px; font-weight:700; color:#EF4444; line-height:1; margin-bottom:8px;">1</div>
+            <div style="font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">позиция заканчивается</div>
+          </div>
+
+          <!-- Низкий запас -->
+          <div style="background:#FFFFFF; border:1px solid #E5EDE5; border-radius:16px; padding:20px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9v4M12 17h.01" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span style="font-family:'Inter',sans-serif; font-size:14px; font-weight:500; color:#F59E0B;">Низкий запас</span>
+            </div>
+            <div style="font-family:'Inter',sans-serif; font-size:40px; font-weight:700; color:#F59E0B; line-height:1; margin-bottom:8px;">2</div>
+            <div style="font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">позиции можно заказать</div>
+          </div>
+
+          <!-- В заказе -->
+          <div style="background:#FFFFFF; border:1px solid #E5EDE5; border-radius:16px; padding:20px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span style="font-family:'Inter',sans-serif; font-size:14px; font-weight:500; color:#2E7D32;">В заказе</span>
+            </div>
+            <div style="font-family:'Inter',sans-serif; font-size:40px; font-weight:700; color:#2E7D32; line-height:1; margin-bottom:8px;">4</div>
+            <div style="font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">позиции в заказе</div>
+          </div>
+
+        </div>
+        <!-- /Отсек 1 -->
+
+        <!-- Отсек 2: Фильтры + таблица -->
+        <div style="display:flex; flex-direction:column; gap:15px;">
+
+          <!-- Фильтры -->
+          <div class="filters-wrap"><div style="display:flex; gap:8px;">
+            <button style="height:32px; padding:0 14px; border-radius:20px; background:#2E7D32; border:none; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; color:#FFFFFF; cursor:pointer;">Все</button>
+            <button style="height:32px; padding:0 14px; border-radius:20px; background:#FFFFFF; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; color:#5A7A5A; cursor:pointer; display:flex; align-items:center; gap:6px;">🌱 Семена</button>
+            <button style="height:32px; padding:0 14px; border-radius:20px; background:#FFFFFF; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; color:#5A7A5A; cursor:pointer; display:flex; align-items:center; gap:6px;">🌿 Грунт</button>
+            <button style="height:32px; padding:0 14px; border-radius:20px; background:#FFFFFF; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; color:#5A7A5A; cursor:pointer; display:flex; align-items:center; gap:6px;">🗂️ Лотки</button>
+            <button style="height:32px; padding:0 14px; border-radius:20px; background:#FFFFFF; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; color:#5A7A5A; cursor:pointer; display:flex; align-items:center; gap:6px;">📦 Упаковка</button>
+          </div></div>
+
+          <!-- Таблица -->
+          <div style="background:#FFFFFF; border:1px solid #E5EDE5; border-radius:16px; overflow:hidden;">
+            <table style="width:100%; border-collapse:collapse;">
+              <thead>
+                <tr style="background:#F7FAF7; border-bottom:1px solid #E5EDE5;">
+                  <th style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#5A7A5A; text-align:left; padding:12px 16px; white-space:nowrap;">Материал</th>
+                  <th style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#5A7A5A; text-align:left; padding:12px 16px; white-space:nowrap;">Категория</th>
+                  <th style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#5A7A5A; text-align:left; padding:12px 16px; white-space:nowrap;">Остаток</th>
+                  <th style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#5A7A5A; text-align:left; padding:12px 16px; white-space:nowrap;">Расход в день</th>
+                  <th style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#5A7A5A; text-align:left; padding:12px 16px; white-space:nowrap;">Дней до конца</th>
+                  <th style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#5A7A5A; text-align:left; padding:12px 16px; white-space:nowrap;">Порог заказа</th>
+                  <th style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#5A7A5A; text-align:left; padding:12px 16px; white-space:nowrap;">В заказе</th>
+                  <th style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#5A7A5A; text-align:left; padding:12px 16px; white-space:nowrap;">Поставщик</th>
+                  <th style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#5A7A5A; text-align:left; padding:12px 16px; white-space:nowrap;">Статус</th>
+                  <th style="padding:12px 16px;"></th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <!-- Семена гороха -->
+                <tr style="border-bottom:1px solid #F0F5F0;">
+                  <td style="padding:14px 16px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="width:32px; height:32px; border-radius:8px; background:#E8F5E9; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🌱</div>
+                      <span style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;">Семена гороха</span>
+                    </div>
+                  </td>
+                  <td style="font-family:'Inter',sans-serif; padding:14px 16px;"><span style="display:inline-block; padding:0 10px; height:24px; line-height:24px; border-radius:12px; background:#F7FAF7; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#6B8A6B; white-space:nowrap;">Семена</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A; padding:14px 16px;"><b>12</b> кг</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">1,5 кг в день</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#5A7A5A; padding:14px 16px;">8 дней</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">10 кг</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">—</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">ЗеленСемя</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:12px; background:#E8F5E9; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;"><span style="width:6px; height:6px; border-radius:50%; background:#2E7D32; flex-shrink:0;"></span>Норма</span></td>
+                  <td style="padding:14px 16px;"><button style="width:50px; height:27px; border-radius:13.5px; background:#E8F5E9; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,0.05);"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.5 11V1M1 5.5H11" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"/></svg></button></td>
+                </tr>
+
+                <!-- Семена редиса -->
+                <tr style="border-bottom:1px solid #F0F5F0;">
+                  <td style="padding:14px 16px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="width:32px; height:32px; border-radius:8px; background:#E8F5E9; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🌱</div>
+                      <span style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;">Семена редиса</span>
+                    </div>
+                  </td>
+                  <td style="font-family:'Inter',sans-serif; padding:14px 16px;"><span style="display:inline-block; padding:0 10px; height:24px; line-height:24px; border-radius:12px; background:#F7FAF7; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#6B8A6B; white-space:nowrap;">Семена</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A; padding:14px 16px;"><b>8</b> кг</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">1 кг в день</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#5A7A5A; padding:14px 16px;">8 дней</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">5 кг</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; height:24px; padding:0 10px; border-radius:12px; background:#E8F5E9; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#2E7D32;">+10 кг</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">ЗеленСемя</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:12px; background:#E8F5E9; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;"><span style="width:6px; height:6px; border-radius:50%; background:#2E7D32; flex-shrink:0;"></span>Норма</span></td>
+                  <td style="padding:14px 16px;"><button style="width:50px; height:27px; border-radius:13.5px; background:#E8F5E9; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,0.05);"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.5 11V1M1 5.5H11" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"/></svg></button></td>
+                </tr>
+
+                <!-- Семена подсолнуха — Критично -->
+                <tr style="border-bottom:1px solid #F0F5F0;">
+                  <td style="padding:14px 16px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="width:32px; height:32px; border-radius:8px; background:#E8F5E9; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🌱</div>
+                      <span style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;">Семена подсолнуха</span>
+                    </div>
+                  </td>
+                  <td style="font-family:'Inter',sans-serif; padding:14px 16px;"><span style="display:inline-block; padding:0 10px; height:24px; line-height:24px; border-radius:12px; background:#F7FAF7; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#6B8A6B; white-space:nowrap;">Семена</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A; padding:14px 16px;"><b>3</b> кг</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">2 кг в день</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#EF4444; padding:14px 16px;">1 день</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">8 кг</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">—</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">ПриродаФерма</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:12px; background:#FEF2F2; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#B91C1C;"><span style="width:6px; height:6px; border-radius:50%; background:#EF4444; flex-shrink:0;"></span>Критично</span></td>
+                  <td style="padding:14px 16px;"><button style="width:50px; height:27px; border-radius:13.5px; background:#E8F5E9; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,0.05);"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.5 11V1M1 5.5H11" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"/></svg></button></td>
+                </tr>
+
+                <!-- Семена брокколи -->
+                <tr style="border-bottom:1px solid #F0F5F0;">
+                  <td style="padding:14px 16px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="width:32px; height:32px; border-radius:8px; background:#E8F5E9; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🌱</div>
+                      <span style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;">Семена брокколи</span>
+                    </div>
+                  </td>
+                  <td style="font-family:'Inter',sans-serif; padding:14px 16px;"><span style="display:inline-block; padding:0 10px; height:24px; line-height:24px; border-radius:12px; background:#F7FAF7; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#6B8A6B; white-space:nowrap;">Семена</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A; padding:14px 16px;"><b>5.5</b> кг</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">0,8 кг в день</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#5A7A5A; padding:14px 16px;">6 дней</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">4 кг</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">—</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">ЗеленСемя</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:12px; background:#E8F5E9; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;"><span style="width:6px; height:6px; border-radius:50%; background:#2E7D32; flex-shrink:0;"></span>Норма</span></td>
+                  <td style="padding:14px 16px;"><button style="width:50px; height:27px; border-radius:13.5px; background:#E8F5E9; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,0.05);"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.5 11V1M1 5.5H11" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"/></svg></button></td>
+                </tr>
+
+                <!-- Кокос. субстрат -->
+                <tr style="border-bottom:1px solid #F0F5F0;">
+                  <td style="padding:14px 16px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="width:32px; height:32px; border-radius:8px; background:#E8F5E9; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🌿</div>
+                      <span style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;">Кокос. субстрат</span>
+                    </div>
+                  </td>
+                  <td style="font-family:'Inter',sans-serif; padding:14px 16px;"><span style="display:inline-block; padding:0 10px; height:24px; line-height:24px; border-radius:12px; background:#F7FAF7; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#6B8A6B; white-space:nowrap;">Грунт</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A; padding:14px 16px;"><b>45</b> мешков</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">3 мешка в день</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#5A7A5A; padding:14px 16px;">15 дней</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">20 мешков</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">—</td>
+                  <td style="font-family:'Inter',sans-serif; padding:14px 16px;"><span style="display:inline-block; padding:0 10px; height:24px; line-height:24px; border-radius:12px; background:#F7FAF7; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#6B8A6B; white-space:nowrap;">ГрунтПро</span></td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:12px; background:#E8F5E9; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;"><span style="width:6px; height:6px; border-radius:50%; background:#2E7D32; flex-shrink:0;"></span>Норма</span></td>
+                  <td style="padding:14px 16px;"><button style="width:50px; height:27px; border-radius:13.5px; background:#E8F5E9; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,0.05);"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.5 11V1M1 5.5H11" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"/></svg></button></td>
+                </tr>
+
+                <!-- Конопл. субстрат — Мало -->
+                <tr style="border-bottom:1px solid #F0F5F0;">
+                  <td style="padding:14px 16px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="width:32px; height:32px; border-radius:8px; background:#E8F5E9; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🌿</div>
+                      <span style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;">Конопл. субстрат</span>
+                    </div>
+                  </td>
+                  <td style="font-family:'Inter',sans-serif; padding:14px 16px;"><span style="display:inline-block; padding:0 10px; height:24px; line-height:24px; border-radius:12px; background:#F7FAF7; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#6B8A6B; white-space:nowrap;">Грунт</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A; padding:14px 16px;"><b>6</b> рулонов</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">1 рулон в день</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#B45309; padding:14px 16px;">6 дней</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">10 рулонов</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; height:24px; padding:0 10px; border-radius:12px; background:#E8F5E9; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#2E7D32;">+20 рулонов</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">ЭкоРост</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:12px; background:#FFFBEB; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#B45309;"><span style="width:6px; height:6px; border-radius:50%; background:#F59E0B; flex-shrink:0;"></span>Мало</span></td>
+                  <td style="padding:14px 16px;"><button style="width:50px; height:27px; border-radius:13.5px; background:#E8F5E9; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,0.05);"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.5 11V1M1 5.5H11" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"/></svg></button></td>
+                </tr>
+
+                <!-- Лотки 10x20 -->
+                <tr style="border-bottom:1px solid #F0F5F0;">
+                  <td style="padding:14px 16px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="width:32px; height:32px; border-radius:8px; background:#E8F5E9; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🗂️</div>
+                      <span style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;">Лотки 10x20</span>
+                    </div>
+                  </td>
+                  <td style="font-family:'Inter',sans-serif; padding:14px 16px;"><span style="display:inline-block; padding:0 10px; height:24px; line-height:24px; border-radius:12px; background:#F7FAF7; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#6B8A6B; white-space:nowrap;">Лотки</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A; padding:14px 16px;"><b>180</b> шт</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">10 шт в день</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#5A7A5A; padding:14px 16px;">18 дней</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">50 шт</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">—</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">ПластЛоток</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:12px; background:#E8F5E9; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;"><span style="width:6px; height:6px; border-radius:50%; background:#2E7D32; flex-shrink:0;"></span>Норма</span></td>
+                  <td style="padding:14px 16px;"><button style="width:50px; height:27px; border-radius:13.5px; background:#E8F5E9; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,0.05);"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.5 11V1M1 5.5H11" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"/></svg></button></td>
+                </tr>
+
+                <!-- Эко-лотки -->
+                <tr style="border-bottom:1px solid #F0F5F0;">
+                  <td style="padding:14px 16px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="width:32px; height:32px; border-radius:8px; background:#E8F5E9; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🗂️</div>
+                      <span style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;">Эко-лотки</span>
+                    </div>
+                  </td>
+                  <td style="font-family:'Inter',sans-serif; padding:14px 16px;"><span style="display:inline-block; padding:0 10px; height:24px; line-height:24px; border-radius:12px; background:#F7FAF7; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#6B8A6B; white-space:nowrap;">Лотки</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A; padding:14px 16px;"><b>40</b> шт</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">5 шт в день</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#5A7A5A; padding:14px 16px;">8 дней</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">30 шт</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; height:24px; padding:0 10px; border-radius:12px; background:#E8F5E9; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#2E7D32;">+100 шт</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">ЭкоПак</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:12px; background:#E8F5E9; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;"><span style="width:6px; height:6px; border-radius:50%; background:#2E7D32; flex-shrink:0;"></span>Норма</span></td>
+                  <td style="padding:14px 16px;"><button style="width:50px; height:27px; border-radius:13.5px; background:#E8F5E9; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,0.05);"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.5 11V1M1 5.5H11" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"/></svg></button></td>
+                </tr>
+
+                <!-- Упаковка 100 -->
+                <tr style="border-bottom:1px solid #F0F5F0;">
+                  <td style="padding:14px 16px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="width:32px; height:32px; border-radius:8px; background:#E8F5E9; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">📦</div>
+                      <span style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;">Упаковка 100</span>
+                    </div>
+                  </td>
+                  <td style="font-family:'Inter',sans-serif; padding:14px 16px;"><span style="display:inline-block; padding:0 10px; height:24px; line-height:24px; border-radius:12px; background:#F7FAF7; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#6B8A6B; white-space:nowrap;">Упаковка</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A; padding:14px 16px;"><b>320</b> шт</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">40 шт в день</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#5A7A5A; padding:14px 16px;">8 дней</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">100 шт</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">—</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">УпакМастер</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:12px; background:#E8F5E9; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;"><span style="width:6px; height:6px; border-radius:50%; background:#2E7D32; flex-shrink:0;"></span>Норма</span></td>
+                  <td style="padding:14px 16px;"><button style="width:50px; height:27px; border-radius:13.5px; background:#E8F5E9; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,0.05);"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.5 11V1M1 5.5H11" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"/></svg></button></td>
+                </tr>
+
+                <!-- Упаковка 200 — Мало -->
+                <tr style="border-bottom:1px solid #F0F5F0;">
+                  <td style="padding:14px 16px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="width:32px; height:32px; border-radius:8px; background:#E8F5E9; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">📦</div>
+                      <span style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;">Упаковка 200</span>
+                    </div>
+                  </td>
+                  <td style="font-family:'Inter',sans-serif; padding:14px 16px;"><span style="display:inline-block; padding:0 10px; height:24px; line-height:24px; border-radius:12px; background:#F7FAF7; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#6B8A6B; white-space:nowrap;">Упаковка</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A; padding:14px 16px;"><b>85</b> шт</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">20 шт в день</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#5A7A5A; padding:14px 16px;">4 дней</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">100 шт</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; height:24px; padding:0 10px; border-radius:12px; background:#E8F5E9; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#2E7D32;">+200 шт</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">ЭкоПак</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:12px; background:#FFFBEB; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#B45309;"><span style="width:6px; height:6px; border-radius:50%; background:#F59E0B; flex-shrink:0;"></span>Мало</span></td>
+                  <td style="padding:14px 16px;"><button style="width:50px; height:27px; border-radius:13.5px; background:#E8F5E9; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,0.05);"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.5 11V1M1 5.5H11" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"/></svg></button></td>
+                </tr>
+
+                <!-- Бренд. этикетки -->
+                <tr>
+                  <td style="padding:14px 16px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="width:32px; height:32px; border-radius:8px; background:#E8F5E9; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">📦</div>
+                      <span style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;">Бренд. этикетки</span>
+                    </div>
+                  </td>
+                  <td style="font-family:'Inter',sans-serif; padding:14px 16px;"><span style="display:inline-block; padding:0 10px; height:24px; line-height:24px; border-radius:12px; background:#F7FAF7; border:1px solid #E5EDE5; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#6B8A6B; white-space:nowrap;">Упаковка</span></td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A; padding:14px 16px;"><b>12</b> рулонов</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">1 рулон в день</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#5A7A5A; padding:14px 16px;">12 дней</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">5 рулонов</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">—</td>
+                  <td style="font-family:'Inter',sans-serif; font-size:13px; color:#5A7A5A; padding:14px 16px;">ЭтикетПро</td>
+                  <td style="padding:14px 16px;"><span style="display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:12px; background:#E8F5E9; font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#2E7D32;"><span style="width:6px; height:6px; border-radius:50%; background:#2E7D32; flex-shrink:0;"></span>Норма</span></td>
+                  <td style="padding:14px 16px;"><button style="width:50px; height:27px; border-radius:13.5px; background:#E8F5E9; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 2px rgba(0,0,0,0.05);"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.5 11V1M1 5.5H11" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"/></svg></button></td>
+                </tr>
+
+              </tbody>
+            </table>
+<div class="mobile-cards">
+<div class="m-card">
+  <div class="m-card-top">
+    <div class="m-card-name"><span class="m-emoji">🌱</span>Семена гороха</div>
+    <span style="display:inline-flex; align-items:center; gap:4px; height:20px; padding:0 8px; border-radius:10px; background:#E8F5E9; color:#2E7D32; font-size:10px; font-weight:500;"><span style="width:5px; height:5px; border-radius:50%; background:#2E7D32;"></span>Норма</span>
+  </div>
+  <div class="m-card-stats">
+    <div class="m-card-stat"><div class="m-card-stat-value">12 кг</div><div class="m-card-stat-label">Остаток</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value">1,5 кг/день</div><div class="m-card-stat-label">Расход</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value" style="color:#1A2E1A">8 дней</div><div class="m-card-stat-label">До конца</div></div>
+  </div>
+  <div class="m-card-meta">Порог: 10 кг · ЗеленСемя </div>
+</div>
+<div class="m-card">
+  <div class="m-card-top">
+    <div class="m-card-name"><span class="m-emoji">🌱</span>Семена редиса</div>
+    <span style="display:inline-flex; align-items:center; gap:4px; height:20px; padding:0 8px; border-radius:10px; background:#E8F5E9; color:#2E7D32; font-size:10px; font-weight:500;"><span style="width:5px; height:5px; border-radius:50%; background:#2E7D32;"></span>Норма</span>
+  </div>
+  <div class="m-card-stats">
+    <div class="m-card-stat"><div class="m-card-stat-value">8 кг</div><div class="m-card-stat-label">Остаток</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value">1 кг/день</div><div class="m-card-stat-label">Расход</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value" style="color:#1A2E1A">8 дней</div><div class="m-card-stat-label">До конца</div></div>
+  </div>
+  <div class="m-card-meta">Порог: 5 кг · ЗеленСемя <span class="m-card-order">+10 кг</span></div>
+</div>
+<div class="m-card">
+  <div class="m-card-top">
+    <div class="m-card-name"><span class="m-emoji">🌱</span>Семена подсолнуха</div>
+    <span style="display:inline-flex; align-items:center; gap:4px; height:20px; padding:0 8px; border-radius:10px; background:#FEF2F2; color:#B91C1C; font-size:10px; font-weight:500;"><span style="width:5px; height:5px; border-radius:50%; background:#EF4444;"></span>Критично</span>
+  </div>
+  <div class="m-card-stats">
+    <div class="m-card-stat"><div class="m-card-stat-value">3 кг</div><div class="m-card-stat-label">Остаток</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value">2 кг/день</div><div class="m-card-stat-label">Расход</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value" style="color:#EF4444">1 день</div><div class="m-card-stat-label">До конца</div></div>
+  </div>
+  <div class="m-card-meta">Порог: 8 кг · ПриродаФерма </div>
+</div>
+<div class="m-card">
+  <div class="m-card-top">
+    <div class="m-card-name"><span class="m-emoji">🌱</span>Семена брокколи</div>
+    <span style="display:inline-flex; align-items:center; gap:4px; height:20px; padding:0 8px; border-radius:10px; background:#E8F5E9; color:#2E7D32; font-size:10px; font-weight:500;"><span style="width:5px; height:5px; border-radius:50%; background:#2E7D32;"></span>Норма</span>
+  </div>
+  <div class="m-card-stats">
+    <div class="m-card-stat"><div class="m-card-stat-value">5.5 кг</div><div class="m-card-stat-label">Остаток</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value">0,8 кг/день</div><div class="m-card-stat-label">Расход</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value" style="color:#1A2E1A">6 дней</div><div class="m-card-stat-label">До конца</div></div>
+  </div>
+  <div class="m-card-meta">Порог: 4 кг · ЗеленСемя </div>
+</div>
+<div class="m-card">
+  <div class="m-card-top">
+    <div class="m-card-name"><span class="m-emoji">🌿</span>Кокос. субстрат</div>
+    <span style="display:inline-flex; align-items:center; gap:4px; height:20px; padding:0 8px; border-radius:10px; background:#E8F5E9; color:#2E7D32; font-size:10px; font-weight:500;"><span style="width:5px; height:5px; border-radius:50%; background:#2E7D32;"></span>Норма</span>
+  </div>
+  <div class="m-card-stats">
+    <div class="m-card-stat"><div class="m-card-stat-value">45 мешков</div><div class="m-card-stat-label">Остаток</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value">3 мешка/день</div><div class="m-card-stat-label">Расход</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value" style="color:#1A2E1A">15 дней</div><div class="m-card-stat-label">До конца</div></div>
+  </div>
+  <div class="m-card-meta">Порог: 20 мешков · ГрунтПро </div>
+</div>
+<div class="m-card">
+  <div class="m-card-top">
+    <div class="m-card-name"><span class="m-emoji">🌿</span>Конопл. субстрат</div>
+    <span style="display:inline-flex; align-items:center; gap:4px; height:20px; padding:0 8px; border-radius:10px; background:#FFFBEB; color:#B45309; font-size:10px; font-weight:500;"><span style="width:5px; height:5px; border-radius:50%; background:#F59E0B;"></span>Мало</span>
+  </div>
+  <div class="m-card-stats">
+    <div class="m-card-stat"><div class="m-card-stat-value">6 рулонов</div><div class="m-card-stat-label">Остаток</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value">1 рулон/день</div><div class="m-card-stat-label">Расход</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value" style="color:#B45309">6 дней</div><div class="m-card-stat-label">До конца</div></div>
+  </div>
+  <div class="m-card-meta">Порог: 10 рулонов · ЭкоРост <span class="m-card-order">+20 рулонов</span></div>
+</div>
+<div class="m-card">
+  <div class="m-card-top">
+    <div class="m-card-name"><span class="m-emoji">🗂️</span>Лотки 10x20</div>
+    <span style="display:inline-flex; align-items:center; gap:4px; height:20px; padding:0 8px; border-radius:10px; background:#E8F5E9; color:#2E7D32; font-size:10px; font-weight:500;"><span style="width:5px; height:5px; border-radius:50%; background:#2E7D32;"></span>Норма</span>
+  </div>
+  <div class="m-card-stats">
+    <div class="m-card-stat"><div class="m-card-stat-value">180 шт</div><div class="m-card-stat-label">Остаток</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value">10 шт/день</div><div class="m-card-stat-label">Расход</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value" style="color:#1A2E1A">18 дней</div><div class="m-card-stat-label">До конца</div></div>
+  </div>
+  <div class="m-card-meta">Порог: 50 шт · ПластЛоток </div>
+</div>
+<div class="m-card">
+  <div class="m-card-top">
+    <div class="m-card-name"><span class="m-emoji">🗂️</span>Эко-лотки</div>
+    <span style="display:inline-flex; align-items:center; gap:4px; height:20px; padding:0 8px; border-radius:10px; background:#E8F5E9; color:#2E7D32; font-size:10px; font-weight:500;"><span style="width:5px; height:5px; border-radius:50%; background:#2E7D32;"></span>Норма</span>
+  </div>
+  <div class="m-card-stats">
+    <div class="m-card-stat"><div class="m-card-stat-value">40 шт</div><div class="m-card-stat-label">Остаток</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value">5 шт/день</div><div class="m-card-stat-label">Расход</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value" style="color:#1A2E1A">8 дней</div><div class="m-card-stat-label">До конца</div></div>
+  </div>
+  <div class="m-card-meta">Порог: 30 шт · ЭкоПак <span class="m-card-order">+100 шт</span></div>
+</div>
+<div class="m-card">
+  <div class="m-card-top">
+    <div class="m-card-name"><span class="m-emoji">📦</span>Упаковка 100</div>
+    <span style="display:inline-flex; align-items:center; gap:4px; height:20px; padding:0 8px; border-radius:10px; background:#E8F5E9; color:#2E7D32; font-size:10px; font-weight:500;"><span style="width:5px; height:5px; border-radius:50%; background:#2E7D32;"></span>Норма</span>
+  </div>
+  <div class="m-card-stats">
+    <div class="m-card-stat"><div class="m-card-stat-value">320 шт</div><div class="m-card-stat-label">Остаток</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value">40 шт/день</div><div class="m-card-stat-label">Расход</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value" style="color:#1A2E1A">8 дней</div><div class="m-card-stat-label">До конца</div></div>
+  </div>
+  <div class="m-card-meta">Порог: 100 шт · УпакМастер </div>
+</div>
+<div class="m-card">
+  <div class="m-card-top">
+    <div class="m-card-name"><span class="m-emoji">📦</span>Упаковка 200</div>
+    <span style="display:inline-flex; align-items:center; gap:4px; height:20px; padding:0 8px; border-radius:10px; background:#FFFBEB; color:#B45309; font-size:10px; font-weight:500;"><span style="width:5px; height:5px; border-radius:50%; background:#F59E0B;"></span>Мало</span>
+  </div>
+  <div class="m-card-stats">
+    <div class="m-card-stat"><div class="m-card-stat-value">85 шт</div><div class="m-card-stat-label">Остаток</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value">20 шт/день</div><div class="m-card-stat-label">Расход</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value" style="color:#B45309">4 дней</div><div class="m-card-stat-label">До конца</div></div>
+  </div>
+  <div class="m-card-meta">Порог: 100 шт · ЭкоПак <span class="m-card-order">+200 шт</span></div>
+</div>
+<div class="m-card">
+  <div class="m-card-top">
+    <div class="m-card-name"><span class="m-emoji">📦</span>Бренд. этикетки</div>
+    <span style="display:inline-flex; align-items:center; gap:4px; height:20px; padding:0 8px; border-radius:10px; background:#E8F5E9; color:#2E7D32; font-size:10px; font-weight:500;"><span style="width:5px; height:5px; border-radius:50%; background:#2E7D32;"></span>Норма</span>
+  </div>
+  <div class="m-card-stats">
+    <div class="m-card-stat"><div class="m-card-stat-value">12 рулонов</div><div class="m-card-stat-label">Остаток</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value">1 рулон/день</div><div class="m-card-stat-label">Расход</div></div>
+    <div class="m-card-stat"><div class="m-card-stat-value" style="color:#1A2E1A">12 дней</div><div class="m-card-stat-label">До конца</div></div>
+  </div>
+  <div class="m-card-meta">Порог: 5 рулонов · ЭтикетПро </div>
+</div>
+</div>
+          </div>
+
+        </div>
+        <!-- /Отсек 2 -->
+
+      </div>
+    </div>
+    <div id="screen-order" class="screen">
+      <div style="padding:20px 24px;">
+
+        <div style="background:#FFFFFF; border:1px solid #E5EDE5; border-radius:16px; padding:17px; width:734px; box-sizing:border-box;">
+
+          <!-- Заголовок -->
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+            <div style="font-family:'Inter',sans-serif; font-size:17px; font-weight:700; color:#1A2E1A;">Детали заказа</div>
+            <button style="font-family:'Inter',sans-serif; font-size:13px; font-weight:500; color:#2E7D32; background:none; border:none; cursor:pointer;">+ Добавить товар</button>
+          </div>
+
+          <!-- Шапка таблицы -->
+          <div style="display:grid; grid-template-columns:2fr 0.6fr 0.5fr 0.8fr 1fr; gap:12px; padding:0 0 12px; border-bottom:1px solid #E5EDE5; margin-bottom:12px;">
+            <div style="font-family:'Inter',sans-serif; font-size:13px; font-weight:500; color:#1A2E1A;">Товар</div>
+            <div style="font-family:'Inter',sans-serif; font-size:13px; font-weight:500; color:#1A2E1A;">Кол-во</div>
+            <div style="font-family:'Inter',sans-serif; font-size:13px; font-weight:500; color:#1A2E1A;">Ед. изм.</div>
+            <div style="font-family:'Inter',sans-serif; font-size:13px; font-weight:500; color:#1A2E1A;">Цена</div>
+            <div style="font-family:'Inter',sans-serif; font-size:13px; font-weight:500; color:#1A2E1A;">Поставщик</div>
+          </div>
+
+          <!-- Строка 1: заполненная -->
+          <div style="display:grid; grid-template-columns:2fr 0.6fr 0.5fr 0.8fr 1fr; gap:12px; margin-bottom:12px;">
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#FFFFFF; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A;">Семена редиса</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#FFFFFF; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A;">10</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#FFFFFF; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A;">кг</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#FFFFFF; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A;">1200₽</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#FFFFFF; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A;">ПриродаФерма</div>
+          </div>
+
+          <!-- Строки 2-4: пустые -->
+          <div style="display:grid; grid-template-columns:2fr 0.6fr 0.5fr 0.8fr 1fr; gap:12px; margin-bottom:12px;">
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; justify-content:space-between; padding:0 14px;">
+              <span style="font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">Выберите товар...</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="#1A2E1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">0</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">—</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">₽</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">—</div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:2fr 0.6fr 0.5fr 0.8fr 1fr; gap:12px; margin-bottom:12px;">
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; justify-content:space-between; padding:0 14px;">
+              <span style="font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">Выберите товар...</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="#1A2E1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">0</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">—</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">₽</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">—</div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:2fr 0.6fr 0.5fr 0.8fr 1fr; gap:12px; margin-bottom:24px;">
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; justify-content:space-between; padding:0 14px;">
+              <span style="font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">Выберите товар...</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="#1A2E1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">0</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">—</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">₽</div>
+            <div style="height:44px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; display:flex; align-items:center; padding:0 14px; font-family:'Inter',sans-serif; font-size:13px; color:#9CA3AF;">—</div>
+          </div>
+
+          <!-- Комментарии -->
+          <div style="margin-bottom:24px;">
+            <div style="font-family:'Inter',sans-serif; font-size:14px; font-weight:600; color:#1A2E1A; margin-bottom:10px;">Комментарии</div>
+            <textarea placeholder="Особые указания, требования к качеству..." style="width:100%; height:100px; border-radius:12px; border:1px solid #E5EDE5; background:#F7FAF7; padding:14px; font-family:'Inter',sans-serif; font-size:13px; color:#1A2E1A; resize:none; outline:none; box-sizing:border-box;"></textarea>
+          </div>
+
+          <!-- Разделитель -->
+          <div style="height:1px; background:#E5EDE5; margin-bottom:20px;"></div>
+
+          <!-- Итог -->
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+            <div style="font-family:'Inter',sans-serif; font-size:15px; font-weight:700; color:#1A2E1A;">Итоговая сумма</div>
+            <div style="font-family:'Inter',sans-serif; font-size:15px; font-weight:700; color:#2E7D32;">1200₽</div>
+          </div>
+
+          <!-- Кнопка -->
+          <button style="width:100%; height:52px; border-radius:14px; background:#2E7D32; border:none; font-family:'Inter',sans-serif; font-size:15px; font-weight:600; color:#FFFFFF; cursor:pointer; transition:background 0.15s;">Отправить заказ</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  function switchScreenMobile(screenId, btn) {
+    document.querySelectorAll('.panel-nav-item').forEach(el => el.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(el => {
+      el.classList.toggle('active', el.getAttribute('onclick').includes(screenId));
+    });
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    document.getElementById('screen-' + screenId).classList.add('active');
+    closePanel();
+  }
+
+  function togglePanel() {
+    document.getElementById('slidePanel').classList.toggle('open');
+    document.getElementById('panelOverlay').classList.toggle('open');
+  }
+
+  function closePanel() {
+    document.getElementById('slidePanel').classList.remove('open');
+    document.getElementById('panelOverlay').classList.remove('open');
+  }
+
+  function switchScreen(screenId, btn) {
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    document.getElementById('screen-' + screenId).classList.add('active');
+  }
+</script>
+</body>
+</html>
