@@ -93,6 +93,20 @@ window.addEventListener('message',function(e){
   if(e.data&&e.data.type==='toggleRoles') tg();
   if(e.data&&e.data.type==='switchRole') go(e.data.idx);
 });
+
+/* Fallback: hook into iframe's role button directly */
+function hookIframe(){
+  try {
+    var doc=document.getElementById('frame').contentDocument;
+    if(!doc) return;
+    var btn=doc.querySelector('.panel-role-btn');
+    if(btn) btn.onclick=function(e){e.preventDefault();e.stopPropagation();tg();};
+    /* Also hook user-btn for desktop view */
+    var ubtn=doc.querySelector('.user-btn');
+    if(ubtn) ubtn.onclick=function(e){e.preventDefault();e.stopPropagation();tg();};
+  } catch(err){}
+}
+document.getElementById('frame').addEventListener('load', hookIframe);
 </script>
 </body>
 </html>
